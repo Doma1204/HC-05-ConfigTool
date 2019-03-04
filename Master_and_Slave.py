@@ -86,9 +86,9 @@ def masterAndSlave_oneSerial():
 		"name": profile["slaveName"],
 		"uart": [profile["baudRate"], profile["stopBit"], profile["parityBit"]],
 		"password": "0000",
-		"role": 0,
 		"connection_mode": 0,
-		"bind_address": masterAddress
+		"bind_address": masterAddress,
+		"role": 0
 	}
 
 	print("Setting slave bluetooth module")
@@ -111,9 +111,9 @@ def masterAndSlave_oneSerial():
 		"name": profile["masterName"],
 		"uart": [profile["baudRate"], profile["stopBit"], profile["parityBit"]],
 		"password": "0000",
-		"role": 1,
 		"connection_mode": 0,
-		"bind_address": slaveAddress
+		"bind_address": slaveAddress,
+		"role": 1
 	}
 
 	print("Setting master bluetooth module")
