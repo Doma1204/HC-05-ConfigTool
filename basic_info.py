@@ -1,18 +1,18 @@
 from port_select import getPort
 from AT_command import *
 
-def get_basic_info():
+def get_basic_info(is_print=True):
 	port_name = getPort("Please select the port of your HC-05: ")
 	port = SerialATMode(port_name, 38400, timeout=0.5, parity=serial.PARITY_NONE, stopbits=serial.STOPBITS_ONE)
-
-	while True:
-		if port.isATMode():
-			break
-		input("The bluetooth module have not entered AT mode yet, please fix your module and then press enter")
+	port.checkATMode()
 
 	print("Getting Basic Information")
+	
+	info = port.getAllInfo()
+	if is_print:
+		print_basic_info("\nInformation of the HC-05 bluetooth module", info)
 
-	print_basic_info("\nInformation of the HC-05 bluetooth module", port.getAllInfo())
+	return info
 
 def print_basic_info(title, info):
 	print(title)

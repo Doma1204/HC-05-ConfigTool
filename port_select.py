@@ -15,4 +15,4 @@ def getPort(info_msg):
 		if selection in range(len(ports)):
 			return ports[selection]
 
-		print("")
+		print()

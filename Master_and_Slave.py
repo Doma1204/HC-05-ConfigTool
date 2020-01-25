@@ -1,9 +1,9 @@
 from port_select import *
 from AT_command import *
+from bluetooth_config import availableBaudRate
 from input_lib import get_input
 from basic_info import print_basic_info
-
-availibleBaudRate = [2400, 4800, 9600, 19200, 38400, 57600, 115200, 230400, 460800, 921600]
+from preset import *
 
 profile = {
 	"masterName": None,
@@ -28,13 +28,21 @@ def masterAndSlave():
 	print("1. Set up master and slave pair with one serial port")
 	print("2. Set up master and slave pair with two serial port")
 
-	setupMethod = get_input(int, "Please select your desire set up method(1-2): ", "Invalid input, please enter again", [1, 2])
-	isUsePreset = get_input(str, "Do you want to use preset to set up the pair? (Y/N) ", "Invalid input, please enter again", correct=["Y", "N", "y", "n"]).upper()
+	setupMethod = get_input(int, "Please select your desire set up method(1-2): ", INVALID_MESSAGE, [1, 2])
+	isUsePreset = get_input(str, "Do you want to use preset to set up the pair? (Y/N) ", INVALID_MESSAGE, correct=["Y", "N", "y", "n"]).upper()
 
+	configReady = False
 	if isUsePreset == "Y":
-		print("In development stage, please visit it later")
-		return
-	else:
+		preset = selectPreset("Master_and_Slave")
+		if preset:
+			adjustPreset(preset, inputFunc={
+				"baudRate": lambda: get_input(int, "Baud rate: ", "Invalid baud rate, please enter again", availibleBaudRate),
+				"stopBit": lambda: get_input(int, "Stop bit: ", "Invalid stop bit, please enter again", [0, 1]),
+				"parityBit": lambda: get_input(int, "Parity bit: ", "Invalid parity bit, please enter again", [0, 1, 2])
+			})
+			configReady = True
+
+	if not configReady:
 		print("\n----------------------------------------------------\n")
 		print("Please enter the following value to set up the pair\n")
 
@@ -44,10 +52,12 @@ def masterAndSlave():
 		profile["stopBit"] = get_input(int, "Stop bit: ", "Invalid stop bit, please enter again", [0, 1])
 		profile["parityBit"] = get_input(int, "Parity bit: ", "Invalid parity bit, please enter again", [0, 1, 2])
 
-		if setupMethod == 1:
-			masterAndSlave_oneSerial()
-		else:
-			masterAndSlave_twoSerial()
+	if setupMethod == 1:
+		masterAndSlave_oneSerial()
+	else:
+		masterAndSlave_twoSerial()
+
+	savePreset("Master_and_Slave", preset)
 
 def masterAndSlave_oneSerial():
 	portName = getPort("Please select your port: ")
@@ -55,22 +65,14 @@ def masterAndSlave_oneSerial():
 
 	print("\nPlease connect your master module to the port and make sure it is in AT mode")
 	input("When you have done, Please press enter to continue")
-
-	while True:
-		if port.isATMode():
-			break
-		input("The bluetooth module have not entered AT mode yet, please fix your module and then press enter")
+	port.checkATMode()
 
 	# masterVersion = port.getVersion()
 	masterAddress = port.getAddress()
 
 	print("\nPlease connect your slave module to the port and make sure it is in AT mode")
 	input("When you have done, Please press enter to continue")
-
-	while True:
-		if port.isATMode():
-			break
-		input("The bluetooth module have not entered AT mode yet, please fix your module and then press enter")
+	port.checkATMode()
 
 	# slaveVersion = port.getVersion()
 
@@ -147,16 +149,8 @@ def masterAndSlave_twoSerial():
 	masterPort = SerialATMode(masterPortName, 38400, timeout=0.5, parity=serial.PARITY_NONE, stopbits=serial.STOPBITS_ONE)
 	slavePort = SerialATMode(slavePortName, 38400, timeout=0.5, parity=serial.PARITY_NONE, stopbits=serial.STOPBITS_ONE)
 
-	while True:
-		if masterPort.isATMode():
-			break
-		input("The master bluetooth module have not entered AT mode yet, please fix your module and then press enter")
-
-	while True:
-		if slavePort.isATMode():
-			break
-		input("The slave bluetooth module have not entered AT mode yet, please fix your module and then press enter")
-
+	masterPort.checkATMode()
+	slavePort.checkATMode()
 
 	# print("Getting the version of two bluetooth module")
 	# masterVersion = masterPort.getVersion()
