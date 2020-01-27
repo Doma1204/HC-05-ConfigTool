@@ -37,11 +37,17 @@ class SerialATMode(serial.Serial):
 				return False
 
 	def isATMode(self):
-		for _ in range(2):
-			if self.sendATCommand("AT") == "OK":
-				return True
-
+		if self.sendATCommand("AT") == "OK":
+			return True
+		if self.sendATCommand("AT") == "OK":
+			return True
 		return False
+
+	def checkATMode(self):
+		while True:
+			if self.isATMode():
+				break
+			input("The bluetooth module have not entered AT mode yet, please fix your module and then press enter")
 
 	def getName(self):
 		name = self.sendATCommand("AT+NAME?")
