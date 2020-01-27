@@ -1,6 +1,6 @@
 from basic_info import get_basic_info
 from bluetooth_config import bt_config
-from Master_and_Slave import masterAndSlave
+from master_and_slave import masterAndSlave
 from preset import viewPreset
 from input_lib import get_input
 
