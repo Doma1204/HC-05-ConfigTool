@@ -4,7 +4,7 @@ with open("README.md", "r") as fh:
     long_description = fh.read()
 
 setuptools.setup(
-    name="HC-05_Bluetooth_Tool",
+    name="HC-05-ConfigTool",
     version="0.0.1",
     author="Joseph Lam",
     author_email="mhlamaf@connect.ust.hk",
