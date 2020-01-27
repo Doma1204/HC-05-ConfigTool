@@ -1,7 +1,7 @@
 # HC-05 Config Tool
-![GitHub Workflow Status](https://img.shields.io/github/workflow/status/Doma1204/HC-05-ConfigTool/Upload_Python_Package)
-[![GitHub release](https://img.shields.io/github/v/release/Doma1204/HC-05-ConfigTool)](./releases)
-![PyPI](https://img.shields.io/pypi/v/HC-05-ConfigTool?color=brightgreen)
+[![GitHub Workflow Status](https://img.shields.io/github/workflow/status/Doma1204/HC-05-ConfigTool/Upload_Python_Package)](https://github.com/Doma1204/HC-05-ConfigTool/actions)
+[![GitHub release](https://img.shields.io/github/v/release/Doma1204/HC-05-ConfigTool)](https://github.com/Doma1204/HC-05-ConfigTool/releases)
+[![PyPI](https://img.shields.io/pypi/v/HC-05-ConfigTool?color=brightgreen)](https://pypi.org/project/HC-05-ConfigTool)
 ![PyPI - Downloads](https://img.shields.io/pypi/dm/HC-05-ConfigTool)
 ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/HC-05-ConfigTool)
 [![Licence](https://img.shields.io/github/license/Doma1204/HC-05-ConfigTool)](/LICENSE)
