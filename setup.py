@@ -1,12 +1,11 @@
 import setuptools
-from hcconfig import __version__
 
 with open("README.md", "r") as fh:
     long_description = fh.read()
 
 setuptools.setup(
     name="HC-05-ConfigTool",
-    version=__version__,
+    version="0.0.2",
     author="Joseph Lam",
     author_email="mhlamaf@connect.ust.hk",
     description="A terminal tool for configuring HC-05 with AT mode.",
@@ -25,4 +24,5 @@ setuptools.setup(
     ],
     python_requires='>=3',
     keywords="bluetooth hc-05",
+    install_requires=["pyserial"]
 )
