@@ -1,5 +1,5 @@
 import json
-from input_lib import *
+from .input_lib import *
 
 def getPreset():
     try:
