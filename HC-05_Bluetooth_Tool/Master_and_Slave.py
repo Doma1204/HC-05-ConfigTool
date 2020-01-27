@@ -5,14 +5,6 @@ from input_lib import get_input
 from basic_info import print_basic_info
 from preset import *
 
-profile = {
-	"masterName": None,
-	"slaveName":  None,
-	"baudRate":   None,
-	"stopBit":    None,
-	"parityBit": None
-}
-
 # Setting up master and slave bluetooth module:
 # 1. Check if the firmware version of the two module are the same, otherwise they cannot pair up
 # 2. Set the name of master and slave module
@@ -33,12 +25,12 @@ def masterAndSlave():
 
 	configReady = False
 	if isUsePreset == "Y":
-		preset = selectPreset("Master_and_Slave")
-		if preset:
-			adjustPreset(preset, inputFunc={
-				"baudRate": lambda: get_input(int, "Baud rate: ", "Invalid baud rate, please enter again", availibleBaudRate),
-				"stopBit": lambda: get_input(int, "Stop bit: ", "Invalid stop bit, please enter again", [0, 1]),
-				"parityBit": lambda: get_input(int, "Parity bit: ", "Invalid parity bit, please enter again", [0, 1, 2])
+		profile = selectPreset("Master_and_Slave")
+		if profile:
+			adjustPreset(profile, inputFunc={
+				"baud_rate": lambda: get_input(int, "Baud rate: ", "Invalid baud rate, please enter again", availableBaudRate),
+				"stop_bit": lambda: get_input(int, "Stop bit: ", "Invalid stop bit, please enter again", [0, 1]),
+				"parity_bit": lambda: get_input(int, "Parity bit: ", "Invalid parity bit, please enter again", [0, 1, 2])
 			})
 			configReady = True
 
@@ -46,20 +38,22 @@ def masterAndSlave():
 		print("\n----------------------------------------------------\n")
 		print("Please enter the following value to set up the pair\n")
 
+		profile = {}
 		profile["masterName"] = input("Master module name: ")
 		profile["slaveName"] = input("Slave module Name: ")
-		profile["baudRate"] = get_input(int, "Baud rate: ", "Invalid baud rate, please enter again", availibleBaudRate)
-		profile["stopBit"] = get_input(int, "Stop bit: ", "Invalid stop bit, please enter again", [0, 1])
-		profile["parityBit"] = get_input(int, "Parity bit: ", "Invalid parity bit, please enter again", [0, 1, 2])
+		profile["baud_rate"] = get_input(int, "Baud rate: ", "Invalid baud rate, please enter again", availableBaudRate)
+		profile["stop_bit"] = get_input(int, "Stop bit: ", "Invalid stop bit, please enter again", [0, 1])
+		profile["parity_bit"] = get_input(int, "Parity bit: ", "Invalid parity bit, please enter again", [0, 1, 2])
 
 	if setupMethod == 1:
-		masterAndSlave_oneSerial()
+		masterAndSlave_oneSerial(profile)
 	else:
-		masterAndSlave_twoSerial()
+		masterAndSlave_twoSerial(profile)
 
-	savePreset("Master_and_Slave", preset)
+	savePreset("Master_and_Slave", profile)
 
-def masterAndSlave_oneSerial():
+def masterAndSlave_oneSerial(profile):
+	print("\n----------------------------------------------------\n")
 	portName = getPort("Please select your port: ")
 	port = SerialATMode(portName, 38400, timeout=0.5, parity=serial.PARITY_NONE, stopbits=serial.STOPBITS_ONE)
 
@@ -67,26 +61,17 @@ def masterAndSlave_oneSerial():
 	input("When you have done, Please press enter to continue")
 	port.checkATMode()
 
-	# masterVersion = port.getVersion()
 	masterAddress = port.getAddress()
 
 	print("\nPlease connect your slave module to the port and make sure it is in AT mode")
 	input("When you have done, Please press enter to continue")
 	port.checkATMode()
 
-	# slaveVersion = port.getVersion()
-
-	# if masterVersion != slaveVersion:
-	# 	print("Master Firmware version ({})".format(masterVersion))
-	# 	print("Slave firmware version ({})".format(slaveVersion))
-	# 	print("The firmware version of the master and slave bluetooth module are different, cannot pair up as master and slave.")
-	# 	return False
-
 	slaveAddress = port.getAddress()
 
 	slave_profile = {
 		"name": profile["slaveName"],
-		"uart": [profile["baudRate"], profile["stopBit"], profile["parityBit"]],
+		"uart": [profile["baud_rate"], profile["stop_bit"], profile["parity_bit"]],
 		"password": "0000",
 		"connection_mode": 0,
 		"bind_address": masterAddress,
@@ -99,7 +84,7 @@ def masterAndSlave_oneSerial():
 	for fail in slaveFail:
 		print("Fail to set slave {}".format(fail))
 
-	print_basic_info("Infomation of master bluetooth module", port.getAllInfo())
+	print_basic_info("Infomation of slave bluetooth module", port.getAllInfo())
 
 	print("\nPlease connect your master module to the port and make sure it is in AT mode")
 	input("When you have done, Please press enter to continue")
@@ -111,7 +96,7 @@ def masterAndSlave_oneSerial():
 
 	master_profile = {
 		"name": profile["masterName"],
-		"uart": [profile["baudRate"], profile["stopBit"], profile["parityBit"]],
+		"uart": [profile["baud_rate"], profile["stop_bit"], profile["parity_bit"]],
 		"password": "0000",
 		"connection_mode": 0,
 		"bind_address": slaveAddress,
@@ -123,6 +108,8 @@ def masterAndSlave_oneSerial():
 
 	for fail in masterFail:
 		print("Fail to set master {}".format(fail))
+	
+	print_basic_info("Infomation of slave bluetooth module", port.getAllInfo())
 
 	if masterFail or slaveFail:
 		print("Fail to pair up the two bluetooth module as master and slave")
@@ -131,12 +118,13 @@ def masterAndSlave_oneSerial():
 
 	port.sendATCommand("AT+RESET")
 
-def masterAndSlave_twoSerial():
+def masterAndSlave_twoSerial(profile):
 	while True:
+		print("\n----------------------------------------------------\n")
 		masterPortName = getPort("Please select your master bluetooth port: ")
-		print("")
+		print("\n----------------------------------------------------\n")
 		slavePortName = getPort("Please select your slave bluetooth port: ")
-		print("")
+		print()
 
 		if masterPortName == slavePortName:
 			print("Master and slave bluetooth port cannot be the same, please select again\n")
@@ -152,22 +140,12 @@ def masterAndSlave_twoSerial():
 	masterPort.checkATMode()
 	slavePort.checkATMode()
 
-	# print("Getting the version of two bluetooth module")
-	# masterVersion = masterPort.getVersion()
-	# slaveVersion = slavePort.getVersion()
-
-	# if masterVersion != slaveVersion:
-	# 	print("Master Firmware version ({})".format(masterVersion))
-	# 	print("Slave firmware version ({})".format(slaveVersion))
-	# 	print("The firmware version of the master and slave bluetooth module are different, cannot pair up as master and slave.")
-	# 	return False
-
 	masterAddress = masterPort.getAddress()
 	slaveAddress = slavePort.getAddress()
 
 	master_profile = {
 		"name": profile["masterName"],
-		"uart": [profile["baudRate"], profile["stopBit"], profile["parityBit"]],
+		"uart": [profile["baud_rate"], profile["stop_bit"], profile["parity_bit"]],
 		"password": "0000",
 		"role": 1,
 		"connection_mode": 0,
@@ -176,7 +154,7 @@ def masterAndSlave_twoSerial():
 
 	slave_profile = {
 		"name": profile["slaveName"],
-		"uart": [profile["baudRate"], profile["stopBit"], profile["parityBit"]],
+		"uart": [profile["baud_rate"], profile["stop_bit"], profile["parity_bit"]],
 		"password": "0000",
 		"role": 0,
 		"connection_mode": 0,

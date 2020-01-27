@@ -1,9 +1,11 @@
 from port_select import getPort
 from AT_command import *
 
-def get_basic_info(is_print=True):
-	port_name = getPort("Please select the port of your HC-05: ")
-	port = SerialATMode(port_name, 38400, timeout=0.5, parity=serial.PARITY_NONE, stopbits=serial.STOPBITS_ONE)
+def get_basic_info(port=None, is_print=True):
+	if not port:
+		port_name = getPort("Please select the port of your HC-05: ")
+		port = SerialATMode(port_name, 38400, timeout=0.5, parity=serial.PARITY_NONE, stopbits=serial.STOPBITS_ONE)
+
 	port.checkATMode()
 
 	print("Getting Basic Information")

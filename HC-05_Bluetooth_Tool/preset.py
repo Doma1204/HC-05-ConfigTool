@@ -12,21 +12,22 @@ def writePreset(preset_json):
     with open("preset.json", "w") as file:
         file.write(json.dumps(preset_json))
 
-def selectPreset(category):
-    preset = getPreset()
+def selectPreset(category, preset=None):
+    if preset == None:
+        preset = getPreset()
     if category in preset.keys():
         print("Please select the following preset:")
-        title = preset[category].keys()
+        title = [t for t in preset[category].keys()]
         for i, key in enumerate(title, start=1):
             print("{}. {}".format(i, key))
-        selection = get_input(int, "Please select 1-{}".format(len(title)), INVALID_MESSAGE, range(1, i+1))
-        return preset[category][title[selection]]
+        selection = get_input(int, "Please select 1-{}: ".format(len(title)), INVALID_MESSAGE, range(1, i+1))
+        return preset[category][title[selection-1]]
     else:
         print("There is no preset available")
         return None
 
 def adjustPreset(preset, inputFunc={}):
-    keys = preset.keys()
+    keys = [key for key in preset.keys()]
     
     while True:
         print("Please select the item you want to change:")
@@ -41,7 +42,9 @@ def adjustPreset(preset, inputFunc={}):
                         key = keys[selection-1]
                         func = inputFunc.get(key)
                         if func:
-                            preset[key] = func()
+                            user_input = func()
+                            if user_input != None:
+                                preset[key] = user_input
                         else:
                             preset[key] = input("Please enter a new {}: ".format(key))
                     else:
@@ -75,3 +78,22 @@ def savePreset(category, preset):
             writePreset(preset_json)
             print("Preset is saved")
             break
+
+def viewPreset():
+    preset = getPreset()
+    if not preset:
+        print("There is no preset available")
+        return
+
+    print("Please select a Category")
+    categories = [c for c in preset.keys()]
+    for i, key in enumerate(categories, start=1):
+        print("{}. {}".format(i, key))
+
+    selection = get_input(int, "Please select 1-{}: ".format(len(categories)), INVALID_MESSAGE, range(1, i+1))
+    print()
+    selectedPreset = selectPreset(categories[selection-1], preset=preset)
+
+    print()
+    for key, value in selectedPreset.items():
+        print("{}: {}".format(key, value))
