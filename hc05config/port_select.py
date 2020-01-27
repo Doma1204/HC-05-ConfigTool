@@ -1,5 +1,5 @@
 from serial.tools.list_ports import comports as listPorts
-from input_lib import get_input
+from .input_lib import get_input
 
 def getPort(info_msg):
 	while True:

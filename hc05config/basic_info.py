@@ -1,5 +1,5 @@
-from port_select import getPort
-from AT_command import *
+from .port_select import getPort
+from .AT_command import *
 
 def get_basic_info(port=None, is_print=True):
 	if not port:

@@ -1,8 +1,8 @@
-from port_select import *
-from AT_command import *
-from input_lib import *
-from basic_info import *
-from preset import *
+from .port_select import *
+from .AT_command import *
+from .input_lib import *
+from .basic_info import *
+from .preset import *
 
 availableBaudRate = [2400, 4800, 9600, 19200, 38400, 57600, 115200, 230400, 460800, 921600]
 

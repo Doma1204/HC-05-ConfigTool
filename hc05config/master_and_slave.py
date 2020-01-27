@@ -1,9 +1,9 @@
-from port_select import *
-from AT_command import *
-from bluetooth_config import availableBaudRate
-from input_lib import get_input
-from basic_info import print_basic_info
-from preset import *
+from .port_select import *
+from .AT_command import *
+from .bluetooth_config import availableBaudRate
+from .input_lib import *
+from .basic_info import print_basic_info
+from .preset import *
 
 # Setting up master and slave bluetooth module:
 # 1. Check if the firmware version of the two module are the same, otherwise they cannot pair up
