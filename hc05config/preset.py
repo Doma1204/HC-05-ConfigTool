@@ -1,5 +1,5 @@
 import json
-from .input_lib import *
+from input_lib import *
 
 def getPreset():
     try:
@@ -94,6 +94,7 @@ def viewPreset():
     print()
     selectedPreset = selectPreset(categories[selection-1], preset=preset)
 
-    print()
+    print("\n-----------------------------------------\n")
     for key, value in selectedPreset.items():
         print("{}: {}".format(key, value))
+    print("\n-----------------------------------------\n")

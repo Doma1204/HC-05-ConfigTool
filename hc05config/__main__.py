@@ -13,7 +13,7 @@ def main():
 		print("4. View preset")
 		print("5. Exit")
 
-		selection = get_input(int, "Please enter 1-4: ", correct=range(1, 5))
+		selection = get_input(int, "Please enter 1-5: ", correct=range(1, 6))
 
 		print("")
 
