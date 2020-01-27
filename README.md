@@ -1,10 +1,10 @@
 # HC-05 Config Tool
 ![GitHub Workflow Status](https://img.shields.io/github/workflow/status/Doma1204/HC-05-ConfigTool/Upload_Python_Package)
-[![GitHub release](https://img.shields.io/github/v/release/Doma1204/HC-05-ConfigTool)](../releases)
+[![GitHub release](https://img.shields.io/github/v/release/Doma1204/HC-05-ConfigTool)](/releases)
 ![PyPI](https://img.shields.io/pypi/v/HC-05-ConfigTool?color=brightgreen)
 ![PyPI - Downloads](https://img.shields.io/pypi/dm/HC-05-ConfigTool)
 ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/HC-05-ConfigTool)
-[![Licence](https://img.shields.io/github/license/Doma1204/HC-05-ConfigTool)](../blob/master/LICENSE)
+[![Licence](https://img.shields.io/github/license/Doma1204/HC-05-ConfigTool)](/blob/master/LICENSE)
 
 A python terminal tool for configuring HC-05 bluetooth module with AT mode
 
@@ -145,4 +145,4 @@ Exit the program
 The tool requires Python with version above 3.0. It is built on top of [pyserial](https://pypi.org/project/pyserial/).
 
 ## Licence
-[MIT Licence](../blob/master/LICENSE)
+[MIT Licence](/blob/master/LICENSE)
