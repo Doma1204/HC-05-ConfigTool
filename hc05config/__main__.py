@@ -1,7 +1,7 @@
 from .basic_info import get_basic_info
 from .bluetooth_config import bt_config
 from .master_and_slave import masterAndSlave
-from .preset import viewPreset
+from .preset import managePreset
 from .input_lib import get_input
 
 def main():
@@ -10,12 +10,11 @@ def main():
 		print("1. Get basic Information of the HC-05")
 		print("2. Config a HC-05")
 		print("3. Set up a pair of master and slave HC-05")
-		print("4. View preset")
-		print("5. Exit")
+		print("4. Manage preset")
 
-		selection = get_input(int, "Please enter 1-5: ", correct=range(1, 6))
+		selection = get_input(int, "Please enter 1-4, or press enter to exit: ", correct=range(1, 5), allow_empty=True)
 
-		print("")
+		print()
 
 		if selection == 1:
 			get_basic_info()
@@ -24,13 +23,14 @@ def main():
 		elif selection == 3:
 			masterAndSlave()
 		elif selection == 4:
-			viewPreset()
-		elif selection == 5:
+			managePreset()
+		else:
 			print("See you")
 			break
 
-		input("Press enter to exit")
-		print("")
+		if selection != 4:
+			input("Press enter to exit")
+		print()
 
 if __name__ == "__main__":
 	main()

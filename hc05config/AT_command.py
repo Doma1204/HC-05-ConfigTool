@@ -1,44 +1,41 @@
 import serial
 from time import sleep
 
-delay = 0.01
-delayTime = 50
-settingMaxTime = 5
+DELAY = 0.01
+MAX_DELAY_TIME = 50
 
 class SerialATMode(serial.Serial):
 	def sendATCommand(self, cmd, raw=False):
 		if not self.is_open:
 			self.open()
+		self.reset_input_buffer()
 
 		cmd += "\r\n"
 		self.write(cmd.encode())
 
 		time = 0
-		while True:
-			while self.in_waiting:
-				text = self.readlines()
-				try:
-					return text if raw else text[0].decode("UTF-8")[:-2]
-				except:
-					return False
-
-			if (time >= delayTime):
-				return False
+		while not self.in_waiting:
 			time += 1
-			sleep(delay)
+			sleep(DELAY)
+			if time > MAX_DELAY_TIME:
+				return False
+
+		text = self.readlines()
+		return text if raw else text[0].decode("UTF-8")[:-2]
+
+	def sendATCommandWithChecking(self, cmd, raw=False):
+		while True:
+			respond = self.sendATCommand(cmd, raw)
+			if not respond:
+				self.checkATMode()
+			else:
+				return respond
 
 	def sendSettingATCommand(self, cmd):
-		tryTime = 0
-		while True:
-			tryTime += 1
-			if self.sendATCommand(cmd) == "OK":
-				return True
-			elif tryTime >= settingMaxTime:
-				return False
+		if self.sendATCommand(cmd) == "OK":
+			return True
 
 	def isATMode(self):
-		if self.sendATCommand("AT") == "OK":
-			return True
 		if self.sendATCommand("AT") == "OK":
 			return True
 		return False

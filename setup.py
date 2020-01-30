@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="HC-05-ConfigTool",
-    version="0.0.1",
+    version="0.0.2",
     author="Joseph Lam",
     author_email="mhlamaf@connect.ust.hk",
     description="A terminal tool for configuring HC-05 with AT mode.",
