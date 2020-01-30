@@ -25,12 +25,12 @@ def masterAndSlave():
 
 	configReady = False
 	if isUsePreset == "Y":
-		profile = selectPreset("Master_and_Slave")
+		profile = selectPreset("Master and Slave")
 		if profile:
 			adjustPreset(profile, inputFunc={
-				"baud_rate": lambda: get_input(int, "Baud rate: ", "Invalid baud rate, please enter again", availableBaudRate),
-				"stop_bit": lambda: get_input(int, "Stop bit: ", "Invalid stop bit, please enter again", [0, 1]),
-				"parity_bit": lambda: get_input(int, "Parity bit: ", "Invalid parity bit, please enter again", [0, 1, 2])
+				"Baud Rate": lambda: get_input(int, "Baud rate: ", "Invalid baud rate, please enter again", availableBaudRate),
+				"Stop Bit": lambda: get_input(int, "Stop bit: ", "Invalid stop bit, please enter again", [0, 1]),
+				"Parity Bit": lambda: get_input(int, "Parity bit: ", "Invalid parity bit, please enter again", [0, 1, 2])
 			})
 			configReady = True
 
@@ -41,16 +41,16 @@ def masterAndSlave():
 		profile = {}
 		profile["masterName"] = input("Master module name: ")
 		profile["slaveName"] = input("Slave module Name: ")
-		profile["baud_rate"] = get_input(int, "Baud rate: ", "Invalid baud rate, please enter again", availableBaudRate)
-		profile["stop_bit"] = get_input(int, "Stop bit: ", "Invalid stop bit, please enter again", [0, 1])
-		profile["parity_bit"] = get_input(int, "Parity bit: ", "Invalid parity bit, please enter again", [0, 1, 2])
+		profile["Baud Rate"] = get_input(int, "Baud rate: ", "Invalid baud rate, please enter again", availableBaudRate)
+		profile["Stop Bit"] = get_input(int, "Stop bit: ", "Invalid stop bit, please enter again", [0, 1])
+		profile["Parity Bit"] = get_input(int, "Parity bit: ", "Invalid parity bit, please enter again", [0, 1, 2])
 
 	if setupMethod == 1:
 		masterAndSlave_oneSerial(profile)
 	else:
 		masterAndSlave_twoSerial(profile)
 
-	savePreset("Master_and_Slave", profile)
+	savePreset("Master and Slave", profile)
 
 def masterAndSlave_oneSerial(profile):
 	print("\n----------------------------------------------------\n")
@@ -70,12 +70,12 @@ def masterAndSlave_oneSerial(profile):
 	slaveAddress = port.getAddress()
 
 	slave_profile = {
-		"name": profile["slaveName"],
-		"uart": [profile["baud_rate"], profile["stop_bit"], profile["parity_bit"]],
-		"password": "0000",
-		"connection_mode": 0,
-		"bind_address": masterAddress,
-		"role": 0
+		"Name": profile["slaveName"],
+		"UART": [profile["Baud Rate"], profile["Stop Bit"], profile["Parity Bit"]],
+		"Password": "0000",
+		"Connection Mode": 0,
+		"Bind Address": masterAddress,
+		"Role": 0
 	}
 
 	print("Setting slave bluetooth module")
@@ -95,12 +95,12 @@ def masterAndSlave_oneSerial(profile):
 		input("The bluetooth module have not entered AT mode yet, please fix your module and then press enter")
 
 	master_profile = {
-		"name": profile["masterName"],
-		"uart": [profile["baud_rate"], profile["stop_bit"], profile["parity_bit"]],
-		"password": "0000",
-		"connection_mode": 0,
-		"bind_address": slaveAddress,
-		"role": 1
+		"Name": profile["masterName"],
+		"UART": [profile["Baud Rate"], profile["Stop Bit"], profile["Parity Bit"]],
+		"Password": "0000",
+		"Connection Mode": 0,
+		"Bind Address": slaveAddress,
+		"Role": 1
 	}
 
 	print("Setting master bluetooth module")
@@ -144,21 +144,21 @@ def masterAndSlave_twoSerial(profile):
 	slaveAddress = slavePort.getAddress()
 
 	master_profile = {
-		"name": profile["masterName"],
-		"uart": [profile["baud_rate"], profile["stop_bit"], profile["parity_bit"]],
-		"password": "0000",
-		"role": 1,
-		"connection_mode": 0,
-		"bind_address": slaveAddress
+		"Name": profile["masterName"],
+		"UART": [profile["Baud Rate"], profile["Stop Bit"], profile["Parity Bit"]],
+		"Password": "0000",
+		"Role": 1,
+		"Connection Mode": 0,
+		"Bind Address": slaveAddress
 	}
 
 	slave_profile = {
-		"name": profile["slaveName"],
-		"uart": [profile["baud_rate"], profile["stop_bit"], profile["parity_bit"]],
-		"password": "0000",
-		"role": 0,
-		"connection_mode": 0,
-		"bind_address": masterAddress
+		"Name": profile["slaveName"],
+		"UART": [profile["Baud Rate"], profile["Stop Bit"], profile["Parity Bit"]],
+		"Password": "0000",
+		"Role": 0,
+		"Connection Mode": 0,
+		"Bind Address": masterAddress
 	}
 
 	print("Setting master bluetooth module")

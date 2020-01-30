@@ -20,23 +20,23 @@ def bt_config():
 
 	if not configReady:
 		config = get_basic_info(port=port, is_print=False)
-		del config["address"]
-		del config["version"]
+		del config["Password"]
+		del config["Version"]
 	
 	print("\n----------------------------------------------------\n")
 	adjustPreset(config, inputFunc={
-		"baud_rate": lambda: get_input(int, "Baud rate: ", "Invalid baud rate, please enter again", availableBaudRate),
-		"stop_bit": lambda: get_input(int, "Stop bit: ", "Invalid stop bit, please enter again", [0, 1]),
-		"parity_bit": lambda: get_input(int, "Parity bit: ", "Invalid parity bit, please enter again", [0, 1, 2]),
-		"password": lambda: get_input(str, "Password: ", "Invalid password, please enter again", lambda x: isInt(x) and len(x) == 4),
-		"role": lambda: get_input(int, "Role (Slave[0], Master[1], Slave-Loop[2]): ", "Invalid role, please enter again", [0, 1, 2]),
-		"connection_mode": lambda: get_input(int, "Connection Mode [0, 1, 2]: ", "Invalid connection mode, please enter again", [0, 1, 2]),
-		"bind_address": lambda: get_input(str, "Bind address: ", "Invalid address, please enter again", lambda x: len(x.split(":")) == 3)
+		"Baud Rate": lambda: get_input(int, "Baud rate: ", "Invalid baud rate, please enter again", availableBaudRate),
+		"Stop Bit": lambda: get_input(int, "Stop bit: ", "Invalid stop bit, please enter again", [0, 1]),
+		"Parity Bit": lambda: get_input(int, "Parity bit: ", "Invalid parity bit, please enter again", [0, 1, 2]),
+		"Password": lambda: get_input(str, "Password: ", "Invalid password, please enter again", lambda x: isInt(x) and len(x) == 4),
+		"Role": lambda: get_input(int, "Role (Slave[0], Master[1], Slave-Loop[2]): ", "Invalid role, please enter again", [0, 1, 2]),
+		"Connection Mode": lambda: get_input(int, "Connection Mode [0, 1, 2]: ", "Invalid connection mode, please enter again", [0, 1, 2]),
+		"Bind Address": lambda: get_input(str, "Bind address: ", "Invalid address, please enter again", lambda x: len(x.split(":")) == 3)
 	})
 
 	print("Setting HC-05 bluetooth module")
 
-	config["uart"] = [config["baud_rate"], config["stop_bit"], config["parity_bit"]]
+	config["UART"] = [config["Baud Rate"], config["Stop Bit"], config["Parity Bit"]]
 	success, fail = port.set(config)
 
 	for item in fail:
@@ -44,5 +44,5 @@ def bt_config():
 	
 	print("Setting completed")
 
-	del config["uart"]
+	del config["UART"]
 	savePreset("BT_Config", config)

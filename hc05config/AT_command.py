@@ -73,7 +73,7 @@ class SerialATMode(serial.Serial):
 		uartInfo = self.sendATCommand("AT+UART?")
 		if uartInfo:
 			parse_uartInfo = list(map(lambda x: int(x), uartInfo[uartInfo.find(":") + 1:].split(",")))
-			return {"baud_rate": parse_uartInfo[0], "stop_bit": parse_uartInfo[1], "parity_bit": parse_uartInfo[2]}
+			return {"Baud Rate": parse_uartInfo[0], "Stop Bit": parse_uartInfo[1], "Parity Bit": parse_uartInfo[2]}
 		else:
 			return False
 
@@ -95,16 +95,16 @@ class SerialATMode(serial.Serial):
 		cmode = self.getConnectionMode()
 		bind = self.getBindAddress()
 
-		return {"name":            name if name else "",
-		        "baud_rate":       uartInfo["baud_rate"] if uartInfo else False,
-		        "stop_bit":        uartInfo["stop_bit"] if uartInfo else False,
-		        "parity_bit":      uartInfo["parity_bit"] if uartInfo else False,
-		        "password":        password if password else "",
-		        "address":         address if address else "",
-		        "version":         version if version else "",
-		        "role":            role,
-		        "connection_mode": cmode,
-		        "bind_address":    bind if bind else ""}
+		return {"Name":            name if name else "",
+		        "Baud Rate":       uartInfo["Baud Rate"] if uartInfo else False,
+		        "Stop Bit":        uartInfo["Stop Bit"] if uartInfo else False,
+		        "Parity Bit":      uartInfo["Parity Bit"] if uartInfo else False,
+		        "Password":        password if password else "",
+		        "Address":         address if address else "",
+		        "Version":         version if version else "",
+		        "Role":            role,
+		        "Connection Mode": cmode,
+		        "Bind Address":    bind if bind else ""}
 
 	def set(self, settings):
 		success = []
@@ -113,17 +113,17 @@ class SerialATMode(serial.Serial):
 		isSet = False
 
 		for setting, value in settings.items():
-			if setting == "name":
+			if setting == "Name":
 				isSet = self.setName(value)
-			elif setting == "uart":
+			elif setting == "UART":
 				isSet = self.setUart(value)
-			elif setting == "password":
+			elif setting == "Password":
 				isSet = self.setPassword(value)
-			elif setting == "role":
+			elif setting == "Role":
 				isSet = self.setRole(value)
-			elif setting == "connection_mode":
+			elif setting == "Connection Mode":
 				isSet = self.setConnectionMode(value)
-			elif setting == "bind_address":
+			elif setting == "Bind Address":
 				isSet = self.setBindAddress(value)
 
 			if isSet:
