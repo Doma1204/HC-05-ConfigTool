@@ -1,44 +1,41 @@
 import serial
 from time import sleep
 
-delay = 0.01
-delayTime = 50
-settingMaxTime = 5
+DELAY = 0.01
+MAX_DELAY_TIME = 50
 
 class SerialATMode(serial.Serial):
 	def sendATCommand(self, cmd, raw=False):
 		if not self.is_open:
 			self.open()
+		self.reset_input_buffer()
 
 		cmd += "\r\n"
 		self.write(cmd.encode())
 
 		time = 0
-		while True:
-			while self.in_waiting:
-				text = self.readlines()
-				try:
-					return text if raw else text[0].decode("UTF-8")[:-2]
-				except:
-					return False
-
-			if (time >= delayTime):
-				return False
+		while not self.in_waiting:
 			time += 1
-			sleep(delay)
+			sleep(DELAY)
+			if time > MAX_DELAY_TIME:
+				return None
+
+		text = self.readlines()
+		return text if raw else text[0].decode("UTF-8")[:-2]
+
+	def sendATCommandWithChecking(self, cmd, raw=False):
+		while True:
+			respond = self.sendATCommand(cmd, raw)
+			if not respond:
+				self.checkATMode()
+			else:
+				return respond
 
 	def sendSettingATCommand(self, cmd):
-		tryTime = 0
-		while True:
-			tryTime += 1
-			if self.sendATCommand(cmd) == "OK":
-				return True
-			elif tryTime >= settingMaxTime:
-				return False
+		if self.sendATCommandWithChecking(cmd) == "OK":
+			return True
 
 	def isATMode(self):
-		if self.sendATCommand("AT") == "OK":
-			return True
 		if self.sendATCommand("AT") == "OK":
 			return True
 		return False
@@ -50,39 +47,39 @@ class SerialATMode(serial.Serial):
 			input("The bluetooth module have not entered AT mode yet, please fix your module and then press enter")
 
 	def getName(self):
-		name = self.sendATCommand("AT+NAME?")
+		name = self.sendATCommandWithChecking("AT+NAME?")
 		return name[name.find(":") + 1:] if name else False
 
 	def getVersion(self):
-		version = self.sendATCommand("AT+VERSION?")
+		version = self.sendATCommandWithChecking("AT+VERSION?")
 		return version[version.find(":") + 1:] if version else False
 
 	def getAddress(self):
-		address = self.sendATCommand("AT+ADDR?")
+		address = self.sendATCommandWithChecking("AT+ADDR?")
 		return address[address.find(":") + 1:] if address else False
 
 	def getRole(self):
-		role = self.sendATCommand("AT+ROLE?")
+		role = self.sendATCommandWithChecking("AT+ROLE?")
 		return int(role[role.find(":") + 1]) if role else False
 
 	def getPassword(self):
-		password = self.sendATCommand("AT+PSWD?")
+		password = self.sendATCommandWithChecking("AT+PSWD?")
 		return password[password.find(":") + 1:].replace("\"", "") if password else False
 
 	def getUartInfo(self):
-		uartInfo = self.sendATCommand("AT+UART?")
+		uartInfo = self.sendATCommandWithChecking("AT+UART?")
 		if uartInfo:
 			parse_uartInfo = list(map(lambda x: int(x), uartInfo[uartInfo.find(":") + 1:].split(",")))
-			return {"baud_rate": parse_uartInfo[0], "stop_bit": parse_uartInfo[1], "parity_bit": parse_uartInfo[2]}
+			return {"Baud Rate": parse_uartInfo[0], "Stop Bit": parse_uartInfo[1], "Parity Bit": parse_uartInfo[2]}
 		else:
 			return False
 
 	def getConnectionMode(self):
-		cmode = self.sendATCommand("AT+CMODE?")
+		cmode = self.sendATCommandWithChecking("AT+CMODE?")
 		return cmode[cmode.find(":") + 1:] if cmode else False
 
 	def getBindAddress(self):
-		bind = self.sendATCommand("AT+BIND?")
+		bind = self.sendATCommandWithChecking("AT+BIND?")
 		return bind[bind.find(":") + 1:] if bind else False
 
 	def getAllInfo(self):
@@ -95,16 +92,16 @@ class SerialATMode(serial.Serial):
 		cmode = self.getConnectionMode()
 		bind = self.getBindAddress()
 
-		return {"name":            name if name else "",
-		        "baud_rate":       uartInfo["baud_rate"] if uartInfo else False,
-		        "stop_bit":        uartInfo["stop_bit"] if uartInfo else False,
-		        "parity_bit":      uartInfo["parity_bit"] if uartInfo else False,
-		        "password":        password if password else "",
-		        "address":         address if address else "",
-		        "version":         version if version else "",
-		        "role":            role,
-		        "connection_mode": cmode,
-		        "bind_address":    bind if bind else ""}
+		return {"Name":            name if name else "",
+		        "Baud Rate":       uartInfo["Baud Rate"] if uartInfo else False,
+		        "Stop Bit":        uartInfo["Stop Bit"] if uartInfo else False,
+		        "Parity Bit":      uartInfo["Parity Bit"] if uartInfo else False,
+		        "Password":        password if password else "",
+		        "Address":         address if address else "",
+		        "Version":         version if version else "",
+		        "Role":            role,
+		        "Connection Mode": cmode,
+		        "Bind Address":    bind if bind else ""}
 
 	def set(self, settings):
 		success = []
@@ -113,17 +110,17 @@ class SerialATMode(serial.Serial):
 		isSet = False
 
 		for setting, value in settings.items():
-			if setting == "name":
+			if setting == "Name":
 				isSet = self.setName(value)
-			elif setting == "uart":
+			elif setting == "UART":
 				isSet = self.setUart(value)
-			elif setting == "password":
+			elif setting == "Password":
 				isSet = self.setPassword(value)
-			elif setting == "role":
+			elif setting == "Role":
 				isSet = self.setRole(value)
-			elif setting == "connection_mode":
+			elif setting == "Connection Mode":
 				isSet = self.setConnectionMode(value)
-			elif setting == "bind_address":
+			elif setting == "Bind Address":
 				isSet = self.setBindAddress(value)
 
 			if isSet:
