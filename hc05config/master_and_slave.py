@@ -1,5 +1,5 @@
 from .port_select import getPort
-from .input_lib import get_input, INVALID_MESSAGE, BAUD_RATE_VALIDATE, STOP_BIT_VAILDATE, PARITY_BIT_VALIDATE, MASTER_AND_SLAVE_VALIDATE
+from .input_lib import get_input, INVALID_MESSAGE, BAUD_RATE_VALIDATE, STOP_BIT_VALIDATE, PARITY_BIT_VALIDATE, MASTER_AND_SLAVE_VALIDATE, NAME_VALIDATOR
 from .basic_info import print_basic_info
 from .preset import selectPreset, adjustPreset, savePreset
 
@@ -33,10 +33,10 @@ def masterAndSlave():
 		print("Please enter the following value to set up the pair\n")
 
 		profile = {}
-		profile["masterName"] = input("Master module name: ")
-		profile["slaveName"] = input("Slave module Name: ")
+		profile["Master Name"] = get_input(str, "Master Name: ", "Invalid name, please enter again", NAME_VALIDATOR, allow_empty=True)
+		profile["Slave Name"] = get_input(str, "Slave Name: ", "Invalid name, please enter again", NAME_VALIDATOR, allow_empty=True)
 		profile["Baud Rate"] = BAUD_RATE_VALIDATE()
-		profile["Stop Bit"] = STOP_BIT_VAILDATE()
+		profile["Stop Bit"] = STOP_BIT_VALIDATE()
 		profile["Parity Bit"] = PARITY_BIT_VALIDATE()
 
 	if setupMethod == 1:
@@ -63,7 +63,7 @@ def masterAndSlave_oneSerial(profile):
 	slaveAddress = port.getAddress()
 
 	slave_profile = {
-		"Name": profile["slaveName"],
+		"Name": profile["Slave Name"],
 		"UART": [profile["Baud Rate"], profile["Stop Bit"], profile["Parity Bit"]],
 		"Password": "0000",
 		"Connection Mode": 0,
@@ -88,7 +88,7 @@ def masterAndSlave_oneSerial(profile):
 		input("The bluetooth module have not entered AT mode yet, please fix your module and then press enter")
 
 	master_profile = {
-		"Name": profile["masterName"],
+		"Name": profile["Master Name"],
 		"UART": [profile["Baud Rate"], profile["Stop Bit"], profile["Parity Bit"]],
 		"Password": "0000",
 		"Connection Mode": 0,
@@ -124,7 +124,7 @@ def masterAndSlave_twoSerial(profile):
 	slaveAddress = slavePort.getAddress()
 
 	master_profile = {
-		"Name": profile["masterName"],
+		"Name": profile["Master Name"],
 		"UART": [profile["Baud Rate"], profile["Stop Bit"], profile["Parity Bit"]],
 		"Password": "0000",
 		"Role": 1,
@@ -133,7 +133,7 @@ def masterAndSlave_twoSerial(profile):
 	}
 
 	slave_profile = {
-		"Name": profile["slaveName"],
+		"Name": profile["Slave Name"],
 		"UART": [profile["Baud Rate"], profile["Stop Bit"], profile["Parity Bit"]],
 		"Password": "0000",
 		"Role": 0,

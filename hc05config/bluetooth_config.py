@@ -21,9 +21,8 @@ def bt_config():
 		config["UART"] = [config["Baud Rate"], config["Stop Bit"], config["Parity Bit"]]
 		old_config = deepcopy(config)
 		del config["UART"]
-	
-	del config["Address"]
-	del config["Version"]
+		del config["Address"]
+		del config["Version"]
 
 	print("\n----------------------------------------------------\n")
 	adjustPreset(config, inputFunc=BLUETOOTH_CONFIG_VALIDATE)

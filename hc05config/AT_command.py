@@ -18,7 +18,7 @@ class SerialATMode(serial.Serial):
 			time += 1
 			sleep(DELAY)
 			if time > MAX_DELAY_TIME:
-				return False
+				return None
 
 		text = self.readlines()
 		return text if raw else text[0].decode("UTF-8")[:-2]
@@ -32,7 +32,7 @@ class SerialATMode(serial.Serial):
 				return respond
 
 	def sendSettingATCommand(self, cmd):
-		if self.sendATCommand(cmd) == "OK":
+		if self.sendATCommandWithChecking(cmd) == "OK":
 			return True
 
 	def isATMode(self):
@@ -47,27 +47,27 @@ class SerialATMode(serial.Serial):
 			input("The bluetooth module have not entered AT mode yet, please fix your module and then press enter")
 
 	def getName(self):
-		name = self.sendATCommand("AT+NAME?")
+		name = self.sendATCommandWithChecking("AT+NAME?")
 		return name[name.find(":") + 1:] if name else False
 
 	def getVersion(self):
-		version = self.sendATCommand("AT+VERSION?")
+		version = self.sendATCommandWithChecking("AT+VERSION?")
 		return version[version.find(":") + 1:] if version else False
 
 	def getAddress(self):
-		address = self.sendATCommand("AT+ADDR?")
+		address = self.sendATCommandWithChecking("AT+ADDR?")
 		return address[address.find(":") + 1:] if address else False
 
 	def getRole(self):
-		role = self.sendATCommand("AT+ROLE?")
+		role = self.sendATCommandWithChecking("AT+ROLE?")
 		return int(role[role.find(":") + 1]) if role else False
 
 	def getPassword(self):
-		password = self.sendATCommand("AT+PSWD?")
+		password = self.sendATCommandWithChecking("AT+PSWD?")
 		return password[password.find(":") + 1:].replace("\"", "") if password else False
 
 	def getUartInfo(self):
-		uartInfo = self.sendATCommand("AT+UART?")
+		uartInfo = self.sendATCommandWithChecking("AT+UART?")
 		if uartInfo:
 			parse_uartInfo = list(map(lambda x: int(x), uartInfo[uartInfo.find(":") + 1:].split(",")))
 			return {"Baud Rate": parse_uartInfo[0], "Stop Bit": parse_uartInfo[1], "Parity Bit": parse_uartInfo[2]}
@@ -75,11 +75,11 @@ class SerialATMode(serial.Serial):
 			return False
 
 	def getConnectionMode(self):
-		cmode = self.sendATCommand("AT+CMODE?")
+		cmode = self.sendATCommandWithChecking("AT+CMODE?")
 		return cmode[cmode.find(":") + 1:] if cmode else False
 
 	def getBindAddress(self):
-		bind = self.sendATCommand("AT+BIND?")
+		bind = self.sendATCommandWithChecking("AT+BIND?")
 		return bind[bind.find(":") + 1:] if bind else False
 
 	def getAllInfo(self):

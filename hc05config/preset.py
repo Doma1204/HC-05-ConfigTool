@@ -1,10 +1,27 @@
 import json
 from .input_lib import get_input, INVALID_MESSAGE, BLUETOOTH_CONFIG_VALIDATE
+from copy import deepcopy
+import os
 
 def getPreset():
     try:
         with open("preset.json", "r") as file:
-            return json.load(file)
+            preset = json.load(file)
+
+        # support for older version
+        replace_flag = False
+        if "BT_Config" in preset.keys():
+            preset["Bluetooth Config"] = deepcopy(preset["BT_Config"])
+            del preset["BT_Config"]
+            replace_flag = True
+        if "Master_and_Slave" in preset.keys():
+            preset["Master and Slave"] = deepcopy(preset["Master_and_Slave"])
+            del preset["Master_and_Slave"]
+            replace_flag = True
+        if replace_flag:
+            writePreset(preset)
+        
+        return preset
     except:
         return {}
 
@@ -126,8 +143,30 @@ def _selectPreset(preset=None):
     title = titles[selection-1]
     return category, title, preset[category][title]
 
+def _savePreset(preset_json, category, title, preset):
+    if preset_json.get(category) == None:
+        preset_json[category] = {}
+    
+    category_json = preset_json[category]
+
+    option = ""
+    while True:
+        if category_json.get(title) != None:
+            option = get_input(str, "\"{}\" already exist, Do you want to Replace(r), Keep Both(k), or Stop(s)? ".format(title), INVALID_MESSAGE, ["R", "K", "S", "r", "k", "s"]).upper()
+            if option == "K":
+                title += "_2"
+            elif option == "S":
+                return False
+        break
+
+    category_json[title] = preset
+    return option != "R"
+
 def viewPreset():
-    _, _, selectedPreset = _selectPreset()
+    try:
+        _, _, selectedPreset = _selectPreset()
+    except:
+        return
 
     print("\n-----------------------------------------\n")
     for key, value in selectedPreset.items():
@@ -136,6 +175,9 @@ def viewPreset():
 
 def editPreset():
     preset = getPreset()
+    if not preset:
+        print("There is no preset available")
+        return
     category, title, selectedPreset = _selectPreset(preset)
 
     adjustPreset(selectedPreset, inputFunc=BLUETOOTH_CONFIG_VALIDATE)
@@ -144,15 +186,23 @@ def editPreset():
 
 def renamePreset():
     preset = getPreset()
+    if not preset:
+        print("There is no preset available")
+        return
     category, title, selectedPreset = _selectPreset(preset)
 
     new_title = input("Please enter a new title: ")
+    _savePreset(preset, category, new_title, selectedPreset)
     del preset[category][title]
     preset[category][new_title] = selectedPreset
     writePreset(preset)
+    print("Preset \"{}\" is renamed".format(title))
 
 def copyPreset():
     preset = getPreset()
+    if not preset:
+        print("There is no preset available")
+        return
     category, title, selectedPreset = _selectPreset(preset)
 
     new_title = input("Please enter a new title: ")
@@ -162,18 +212,58 @@ def copyPreset():
 
 def deletePreset():
     preset = getPreset()
+    if not preset:
+        print("There is no preset available")
+        return
     category, title, _ = _selectPreset(preset)
 
     print("Preset \"{}\" has been deleted".format(title))
     del preset[category][title]
+    if not preset[category]:
+        del preset[category]
     writePreset(preset)
 
 # TODO: Export preset feature
 def exportPreset():
-    print("Work on Progress!")
-    return
+    preset = getPreset()
+    if not preset:
+        print("There is no preset available")
+        return
+
+    while True:
+        print("Please enter the directory and file name (e.g. ~/Desktop/bluetooth_preset):")
+        file = input()
+        absPath = os.path.abspath(os.path.expanduser(file))
+        if os.path.isfile(absPath):
+            option = get_input(str, "\"{}\" already exist, Do you want to Replace(r), Keep Both(k), or Stop(s)? ".format(absPath), INVALID_MESSAGE, ["R", "K", "S", "r", "k", "s"]).upper()
+            if option == "K":
+                absPath += "_2"
+            elif option == "S":
+                continue
+        break
+
+    dir, name = os.path.split(absPath)
+    if not os.path.isdir(dir):
+        os.makedirs(dir)
+    
+    with open(absPath, "w") as file:
+        file.write(json.dumps(preset, indent=4))
+
+    print("Presets have been exported to \"{}\"".format(absPath))
 
 # TODO: Import preset feature
 def importPreset():
-    print("Work on Progress!")
-    return
+    file = get_input(str, "Please enter the directory and file name (e.g. ~/Desktop/bluetooth_preset):\n", "File not exist, please enter again", correct=lambda x: os.path.isfile(os.path.abspath(os.path.expanduser(x))))
+    absPath = os.path.abspath(os.path.expanduser(file))
+    
+    with open(absPath, "r") as file:
+        preset_import = json.load(file)
+    
+    preset = getPreset()
+
+    for category, new_presets in preset_import.items():
+        for title, new_preset in new_presets.items():
+            _savePreset(preset, category, title, new_preset)
+
+    writePreset(preset)
+    print("Presets have been imported")
