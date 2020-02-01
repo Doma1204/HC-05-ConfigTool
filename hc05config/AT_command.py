@@ -76,7 +76,7 @@ class SerialATMode(serial.Serial):
 
 	def getConnectionMode(self):
 		cmode = self.sendATCommandWithChecking("AT+CMODE?")
-		return cmode[cmode.find(":") + 1:] if cmode else False
+		return int(cmode[cmode.find(":") + 1:]) if cmode else False
 
 	def getBindAddress(self):
 		bind = self.sendATCommandWithChecking("AT+BIND?")
