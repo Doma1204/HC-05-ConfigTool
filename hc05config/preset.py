@@ -3,9 +3,11 @@ from .input_lib import get_input, INVALID_MESSAGE, BLUETOOTH_CONFIG_VALIDATE
 from copy import deepcopy
 import os
 
-def getPreset():
+DEFAULT_PRESET_PATH = "~/.hc05config_preset"
+
+def getPreset(json_file=DEFAULT_PRESET_PATH):
     try:
-        with open("preset.json", "r") as file:
+        with open(os.path.abspath(os.path.expanduser(json_file)), "r") as file:
             preset = json.load(file)
 
         # support for older version
@@ -25,9 +27,9 @@ def getPreset():
     except:
         return {}
 
-def writePreset(preset_json):
-    with open("preset.json", "w") as file:
-        file.write(json.dumps(preset_json))
+def writePreset(preset_json, json_file=DEFAULT_PRESET_PATH, *arg, **kwarg):
+    with open(os.path.abspath(os.path.expanduser(json_file)), "w") as file:
+        file.write(json.dumps(preset_json, *arg, **kwarg))
 
 def selectPreset(category):
     preset = getPreset()
@@ -242,12 +244,10 @@ def exportPreset():
                 continue
         break
 
-    dir, name = os.path.split(absPath)
+    dir, _ = os.path.split(absPath)
     if not os.path.isdir(dir):
         os.makedirs(dir)
-    
-    with open(absPath, "w") as file:
-        file.write(json.dumps(preset, indent=4))
+    writePreset(preset, json_file=absPath, indent=4)
 
     print("Presets have been exported to \"{}\"".format(absPath))
 
@@ -256,12 +256,11 @@ def importPreset():
     file = get_input(str, "Please enter the directory and file name (e.g. ~/Desktop/bluetooth_preset):\n", "File not exist, please enter again", correct=lambda x: os.path.isfile(os.path.abspath(os.path.expanduser(x))))
     absPath = os.path.abspath(os.path.expanduser(file))
     
-    with open(absPath, "r") as file:
-        preset_import = json.load(file)
-    
+    preset_import = getPreset(absPath)
     preset = getPreset()
 
     for category, new_presets in preset_import.items():
+        print("Importing \"{}\" preset".format(category))
         for title, new_preset in new_presets.items():
             _savePreset(preset, category, title, new_preset)
 
