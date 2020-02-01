@@ -158,4 +158,4 @@ This package **does not** fully support all HC-05 AT mode commands. The supporte
 The tool is built on top of [pyserial](https://pypi.org/project/pyserial/).
 
 ## Licence
-[MIT Licence](/LICENSE)
+[MIT Licence](https://github.com/Doma1204/HC-05-ConfigTool/blob/master/LICENSE)
