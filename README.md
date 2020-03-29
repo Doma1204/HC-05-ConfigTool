@@ -156,7 +156,7 @@ This package **does not** fully support all HC-05 AT mode commands. The supporte
 - `AT+BIND`
 
 ## Change Log
-For the complete changelog, please refer to [CHANGELOG.md](CHANGELOG.md)
+For the complete changelog, please refer to [CHANGELOG.md](https://github.com/Doma1204/HC-05-ConfigTool/blob/master/CHANGELOG.md).
 ## Version 0.1.1 - 2020-03-29
 ### Better Preset management
 #### Added
