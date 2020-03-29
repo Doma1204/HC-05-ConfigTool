@@ -21,7 +21,11 @@ class SerialATMode(serial.Serial):
 				return None
 
 		text = self.readlines()
-		return text if raw else text[0].decode("UTF-8")[:-2]
+		try:
+			return text if raw else text[0].decode("UTF-8")[:-2]
+		except UnicodeDecodeError:
+			print("Error: Unable to decode incoming message")
+			return text
 
 	def sendATCommandWithChecking(self, cmd, raw=False):
 		while True:
@@ -47,7 +51,15 @@ class SerialATMode(serial.Serial):
 			input("The bluetooth module have not entered AT mode yet, please fix your module and then press enter")
 
 	def getName(self):
-		name = self.sendATCommandWithChecking("AT+NAME?")
+		while True:
+			name = self.sendATCommand("AT+NAME?")
+			if not name:
+				if self.isATMode():
+					return False
+				else:
+					input("The bluetooth module have not entered AT mode yet, please fix your module and then press enter")
+			else:
+				break
 		return name[name.find(":") + 1:] if name else False
 
 	def getVersion(self):

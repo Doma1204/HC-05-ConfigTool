@@ -22,8 +22,9 @@ def masterAndSlave():
 	isUsePreset = get_input(str, "Do you want to use preset to set up the pair? (Y/N) ", INVALID_MESSAGE, correct=["Y", "N", "y", "n"]).upper()
 
 	configReady = False
+	title = None
 	if isUsePreset == "Y":
-		profile = selectPreset("Master and Slave")
+		title, profile = selectPreset("Master and Slave")
 		if profile:
 			adjustPreset(profile, inputFunc=MASTER_AND_SLAVE_VALIDATE)
 			configReady = True
@@ -44,7 +45,7 @@ def masterAndSlave():
 	else:
 		masterAndSlave_twoSerial(profile)
 
-	savePreset("Master and Slave", profile)
+	savePreset("Master and Slave", profile, title)
 
 def masterAndSlave_oneSerial(profile):
 	print("\n----------------------------------------------------\n")

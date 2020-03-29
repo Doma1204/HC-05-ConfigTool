@@ -12,6 +12,7 @@ A python terminal tool for configuring HC-05 bluetooth module with AT mode
 - [Installation](#Installation)
 - [Run](#Run)
 - [Usage](#Usage)
+- [Change Log](#Change-Log)
 - [Dependencies](#Dependencies)
 - [Licence](#Licence)
 
@@ -140,6 +141,16 @@ bind_address: 0:0:0
 
 #### 5. Exit
 Exit the program
+
+## Change Log
+For the complete change log, please refer to [CHANGELOG.md](CHANGELOG.md)
+## Version 0.1.1 - 2020-03-29
+### Better Preset management
+#### Added
+- If preset is changed during HC-05 set up process, it first ask if you want to save changes to the preset.
+#### Fixed
+- Fix Infinite loop when attempting to retrieve the name of HC-05 module with firmware version 2.x.
+- Add notification about decoding error instead of fatal error. This error usually happen when the connection between the HC-05 module and computer is unstable.
 
 ## Dependencies
 The tool requires Python with version above 3.0. It is built on top of [pyserial](https://pypi.org/project/pyserial/).

@@ -11,8 +11,9 @@ def bt_config():
 	isUsePreset = get_input(str, "Do you want to use preset to set up the pair? (Y/N) ", INVALID_MESSAGE, correct=["Y", "N", "y", "n"]).upper()
 
 	presetReady = False
+	title = None
 	if isUsePreset == "Y":
-		config = selectPreset("Bluetooth Config")
+		title, config = selectPreset("Bluetooth Config")
 		if config:
 			presetReady = True
 
@@ -32,7 +33,7 @@ def bt_config():
 		new_config = {}
 		for key in config.keys():
 			if old_config[key] != config[key]:
-				new_config[key] = config[key]		
+				new_config[key] = config[key]
 
 	print("Setting HC-05 bluetooth module")
 	success, fail = port.set(config if presetReady else new_config)
@@ -43,4 +44,4 @@ def bt_config():
 	print("Setting completed")
 
 	del config["UART"]
-	savePreset("Bluetooth Config", config)
+	savePreset("Bluetooth Config", config, title)

@@ -39,10 +39,10 @@ def selectPreset(category):
         for i, key in enumerate(title, start=1):
             print("{}. {}".format(i, key))
         selection = get_input(int, "Please select 1-{}: ".format(len(title)), INVALID_MESSAGE, range(1, i+1))
-        return preset[category][title[selection-1]]
+        return title[selection-1], preset[category][title[selection-1]]
     else:
         print("There is no preset available")
-        return None
+        return None, None
 
 def adjustPreset(preset, inputFunc={}):
     keys = [key for key in preset.keys()]
@@ -64,13 +64,21 @@ def adjustPreset(preset, inputFunc={}):
         else:
             return preset
 
-def savePreset(category, preset):
-    if get_input(str, "Do you want to save the configuration as a preset? (Y/N) ", INVALID_MESSAGE, ["Y", "N", "y", "n"]).upper() == "Y":
-        preset_json = getPreset()
-        if preset_json.get(category) == None:
-            preset_json[category] = {}
-        
-        category_json = preset_json[category]
+def savePreset(category, preset, title=None):
+    if title == None:
+        if get_input(str, "Do you want to save the configuration as a new preset? (Y/N) ", INVALID_MESSAGE, ["Y", "N", "y", "n"]).upper() == "N":
+            return
+    elif get_input(str, "Do you want to save the configuration as \"{}\"? (Y/N)".format(title), INVALID_MESSAGE, ["Y", "N", "y", "n"]).upper() == "N":
+        title = None
+        if get_input(str, "Do you want to save the configuration as a new preset? (Y/N) ", INVALID_MESSAGE, ["Y", "N", "y", "n"]).upper() == "N":
+            return
+
+    preset_json = getPreset()
+    if preset_json.get(category) == None:
+        preset_json[category] = {}
+    
+    category_json = preset_json[category]
+    if title == None:
         while True:
             title = input("Please enter the preset title: ")
             if category_json.get(title) != None:
@@ -79,11 +87,11 @@ def savePreset(category, preset):
                     title += "_2"
                 elif option == "S":
                     continue
-
-            category_json[title] = preset
-            writePreset(preset_json)
-            print("Preset is saved")
             break
+
+    category_json[title] = preset
+    writePreset(preset_json)
+    print("Preset is saved")
 
 def managePreset():
     print("\n-----------------------------------------\n")
@@ -225,7 +233,6 @@ def deletePreset():
         del preset[category]
     writePreset(preset)
 
-# TODO: Export preset feature
 def exportPreset():
     preset = getPreset()
     if not preset:
@@ -251,7 +258,6 @@ def exportPreset():
 
     print("Presets have been exported to \"{}\"".format(absPath))
 
-# TODO: Import preset feature
 def importPreset():
     file = get_input(str, "Please enter the directory and file name (e.g. ~/Desktop/bluetooth_preset):\n", "File not exist, please enter again", correct=lambda x: os.path.isfile(os.path.abspath(os.path.expanduser(x))))
     absPath = os.path.abspath(os.path.expanduser(file))
