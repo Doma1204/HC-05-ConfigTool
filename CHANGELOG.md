@@ -1,5 +1,12 @@
 # Change Log
 
+## Version 1.0.0
+
+#### Added
+
+#### Fixed
+- Bluetooth address with lower-case letter a-f can be successfully validate as valid address
+
 ## Version 0.1.1 - 2020-03-29
 ### Better Preset management
 #### Added
